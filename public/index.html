@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Local Internet Speed Test</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg:#080a0f; --panel:#10141d; --panel2:#151b26;
+      --text:#f6f8fb; --muted:#8d98aa; --line:#232b39; --accent:#f48120;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0; min-height:100vh; font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+      background:
+        radial-gradient(circle at 50% -10%, rgba(244,129,32,.18), transparent 32rem),
+        var(--bg); color:var(--text); display:grid; place-items:center; padding:28px;
+    }
+    .app{width:min(980px,100%)}
+    header{display:flex;align-items:center;justify-content:space-between;gap:18px;margin-bottom:22px}
+    .brand{display:flex;align-items:center;gap:12px}
+    .logo{width:42px;height:42px;border-radius:12px;background:var(--accent);display:grid;place-items:center;font-weight:900;color:#111}
+    h1{font-size:20px;margin:0}
+    .sub{font-size:13px;color:var(--muted);margin-top:3px}
+    #status{font-size:13px;color:var(--muted)}
+    #status[data-kind="running"]{color:#ffb169}
+    #status[data-kind="done"]{color:#75d69c}
+    #status[data-kind="error"]{color:#ff7c7c}
+    .hero,.info{background:rgba(16,20,29,.9);border:1px solid var(--line);border-radius:24px}
+    .hero{padding:34px}
+    .gauge{height:235px;display:grid;place-items:center;position:relative;overflow:hidden}
+    .arc{width:360px;height:180px;border:20px solid var(--line);border-bottom:0;border-radius:190px 190px 0 0;position:absolute;bottom:25px}
+    .needle{position:absolute;width:4px;height:130px;background:var(--accent);border-radius:9px;bottom:28px;transform-origin:50% 100%;transform:rotate(-120deg);transition:transform .25s ease}
+    .hub{position:absolute;width:22px;height:22px;border-radius:50%;background:#fff;bottom:18px}
+    .primary{position:absolute;bottom:58px;text-align:center}
+    .primary .num{font-size:54px;font-weight:750;letter-spacing:-2px}
+    .primary .unit{font-size:13px;color:var(--muted);margin-top:-5px}
+    .metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:8px}
+    .metric{padding:18px;background:var(--panel2);border:1px solid var(--line);border-radius:17px}
+    .metric .label{font-size:12px;color:var(--muted);margin-bottom:7px}
+    .metric strong{font-size:24px}
+    .metric small{color:var(--muted);margin-left:5px}
+    .actions{display:flex;justify-content:center;margin-top:24px}
+    button{border:0;background:var(--accent);color:#111;font-weight:800;font-size:15px;padding:14px 28px;border-radius:999px;cursor:pointer;min-width:150px}
+    button:disabled{opacity:.65;cursor:wait}
+    .info{margin-top:16px;padding:22px;display:grid;grid-template-columns:repeat(4,1fr);gap:18px}
+    .info .label{font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:5px}
+    .info .value{font-size:14px;overflow-wrap:anywhere}
+    footer{text-align:center;color:var(--muted);font-size:12px;margin-top:16px;line-height:1.5}
+    @media(max-width:720px){
+      body{padding:16px}.hero{padding:20px}.metrics,.info{grid-template-columns:repeat(2,1fr)}
+      .gauge{height:205px}.arc{width:300px;height:150px}.needle{height:108px}.primary .num{font-size:46px}
+      header{align-items:flex-start;flex-direction:column}
+    }
+  </style>
+</head>
+<body>
+  <main class="app">
+    <header>
+      <div class="brand">
+        <div class="logo">CF</div>
+        <div>
+          <h1>Internet Speed Test</h1>
+          <div class="sub">Self-hosted UI · Cloudflare edge measurement</div>
+        </div>
+      </div>
+      <div id="status">Ready</div>
+    </header>
+
+    <section class="hero">
+      <div class="gauge">
+        <div class="arc"></div>
+        <div class="needle" id="needle"></div>
+        <div class="hub"></div>
+        <div class="primary">
+          <div class="num" id="download">—</div>
+          <div class="unit">DOWNLOAD Mbps</div>
+        </div>
+      </div>
+
+      <div class="metrics">
+        <div class="metric"><div class="label">Upload</div><strong id="upload">—</strong><small>Mbps</small></div>
+        <div class="metric"><div class="label">Latency</div><strong id="latency">—</strong><small>ms</small></div>
+        <div class="metric"><div class="label">Jitter</div><strong id="jitter">—</strong><small>ms</small></div>
+        <div class="metric"><div class="label">Duration</div><strong id="duration">—</strong><small id="elapsed">0s</small></div>
+      </div>
+
+      <div class="actions"><button id="start">Start Test</button></div>
+    </section>
+
+    <section class="info">
+      <div><div class="label">Public IP</div><div class="value" id="ip">Loading…</div></div>
+      <div><div class="label">ISP</div><div class="value" id="isp">Loading…</div></div>
+      <div><div class="label">Cloudflare POP</div><div class="value" id="pop">Loading…</div></div>
+      <div><div class="label">Location</div><div class="value" id="location">Loading…</div></div>
+    </section>
+
+    <footer>
+      Test traffic goes from the device running this page directly to Cloudflare. Large tests may consume significant data.
+    </footer>
+  </main>
+  <script src="/app.js"></script>
+</body>
+</html>
